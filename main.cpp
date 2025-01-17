@@ -123,7 +123,7 @@ void reverse32(uint32_t &byte){
 
 }
 
-void printPacket(const  Packet &packet){
+void printPacket( Packet &packet){
     reverse32(packet.timeStamp);
     std::cout<<static_cast<int>(packet.timeStamp)/1000000.0f;
     std::cout<<static_cast<int>(packet.block0.flagEE);
