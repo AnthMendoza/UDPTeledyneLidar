@@ -102,12 +102,6 @@ struct Packet{
     dataBlock block15;
 };
 
-dataBlock* blocks[] = {
-    &packet.block0, &packet.block1, &packet.block2, &packet.block3,
-    &packet.block4, &packet.block5, &packet.block6, &packet.block7,
-    &packet.block8, &packet.block9, &packet.block10, &packet.block11,
-    &packet.block12, &packet.block13, &packet.block14, &packet.block15
-};
 
 //data block is a struct which takes data to construct, thus memcpy wont fill properllly 
 
@@ -164,6 +158,15 @@ int main() {
     sockaddr_in clientAddr{};
     socklen_t clientAddrLen = sizeof(clientAddr);
 
+    Packet packet;
+
+    dataBlock* blocks[] = {
+        &packet.block0, &packet.block1, &packet.block2, &packet.block3,
+        &packet.block4, &packet.block5, &packet.block6, &packet.block7,
+        &packet.block8, &packet.block9, &packet.block10, &packet.block11,
+        &packet.block12, &packet.block13, &packet.block14, &packet.block15
+    };
+
     while (true) {
         memset(buffer, 0, sizeof(buffer)); // Zero-initialize the buffer
 
@@ -177,7 +180,6 @@ int main() {
 
         std::cout << "Received " << bytesReceived << " bytes as hex:\n";
         if(bytesReceived == BUFFER_SIZE){
-            Packet packet;
             for(int i = 0 ; i < 12 ; i++){
                 memcpy(&blocks[i] , buffer + i * 100 , 100);
                           
