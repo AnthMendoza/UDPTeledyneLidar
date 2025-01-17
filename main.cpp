@@ -83,6 +83,25 @@ struct dataBlock{
     uint8_t  BreflectChennel15;
 };
 
+struct Packet{
+    dataBlock block0;
+    dataBlock block1;
+    dataBlock block2;
+    dataBlock block3;
+    dataBlock block4;
+    dataBlock block5;
+    dataBlock block6;
+    dataBlock block7;
+    dataBlock block8;
+    dataBlock block9;
+    dataBlock block10;
+    dataBlock block11;
+    dataBlock block12;
+    dataBlock block13;
+    dataBlock block14;
+    dataBlock block15;
+};
+
 
 //data block is a struct which takes data to construct, thus memcpy wont fill properllly 
 
@@ -100,23 +119,15 @@ uint32_t reverse32(uint32_t &byte){
            ((byte & 0xFF000000) >> 24);
 }
 
-//void formatBlock(dataBlock &block){
-//    block.azimuth = reverse16(block.azimuth);
-//    block.distChannel0 = reverse16(block.distChannel0);
-//}
-
-void printPacket(const dataBlock &block){
-    //std::cout<<static_cast<int>(packet.block0.azimuth/100);
-    //std::cout<<static_cast<int>(packet.block0.distChannel0);
-    //std::cout<<static_cast<int>(packet.block0.distChannel1);
-    //std::cout<<static_cast<int>(packet.block0.distChannel2);
-    //std::cout<<static_cast<int>(packet.block0.distChannel3);
-    std::cout<<static_cast<int>(block.flagEE);
-    std::cout<<static_cast<int>(block.flagFF);
-    std::cout<<static_cast<int>(block.flagEE);
-    std::cout<<static_cast<int>(block.flagFF);
-    std::cout<<static_cast<int>(block.flagEE);
-    std::cout<<static_cast<int>(block.flagFF);
+void printPacket(const  Packet &packet){
+    std::cout<<static_cast<int>(packet.block0.flagEE);
+    std::cout<<static_cast<int>(packet.block0.flagFF);
+    std::cout<<static_cast<int>(packet.block1.flagEE);
+    std::cout<<static_cast<int>(packet.block1.flagFF);
+    std::cout<<static_cast<int>(packet.block2.flagEE);
+    std::cout<<static_cast<int>(packet.block2.flagFF);
+    std::cout<<static_cast<int>(packet.block3.flagEE);
+    std::cout<<static_cast<int>(packet.block3.flagFF);
 }
 
 
@@ -160,11 +171,12 @@ int main() {
 
         std::cout << "Received " << bytesReceived << " bytes as hex:\n";
         if(bytesReceived == BUFFER_SIZE){
+            Packet packet;
             for(int i = 0 ; i < 12 ; i++){
-                dataBlock block;
-                memcpy(&block , buffer + i * 100 , 100);
-                printPacket(block);
+                memcpy(packet + i*100, buffer + i * 100 , 100);
+                          
             }
+            printPacket(packet);
         }else{
             std::cout<<"Packet Failed expected size " << BUFFER_SIZE << "bytes : recieved "<< bytesReceived << " bytes";
         }
