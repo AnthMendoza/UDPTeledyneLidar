@@ -100,50 +100,17 @@ struct Packet{
     dataBlock block13;
     dataBlock block14;
     dataBlock block15;
+
+    uint32_t timeStamp;
 };
 
 
 
 
 
-void reverse16(uint16_t &byte){
-
-    byte = ((byte & 0x00FF) << 8) | 
-           ((byte & 0xFF00) >> 8)  ;
-
-}
-void reverse32(uint32_t &byte){
-
-    byte = ((byte & 0x000000FF) << 24) | 
-           ((byte & 0x0000FF00) << 8)  | 
-           ((byte & 0x00FF0000) >> 8)  | 
-           ((byte & 0xFF000000) >> 24);
-
-}
-
 void printPacket( Packet &packet){
-    reverse16(packet.block0.azimuth);
-    std::cout<<static_cast<float>(packet.block0.azimuth)/100<< "\n";
-    reverse16(packet.block1.azimuth);
-    std::cout<<static_cast<float>(packet.block1.azimuth)/100<< "\n";
-    reverse16(packet.block2.azimuth);
-    std::cout<<static_cast<float>(packet.block2.azimuth)/100<< "\n";
-    reverse16(packet.block3.azimuth);
-    std::cout<<static_cast<float>(packet.block3.azimuth)/100<< "\n";
-    reverse16(packet.block4.azimuth);
-    std::cout<<static_cast<float>(packet.block4.azimuth)/100<< "\n";
-    reverse16(packet.block5.azimuth);
-    std::cout<<static_cast<float>(packet.block5.azimuth)/100<< "\n";
-    reverse16(packet.block6.azimuth);
-    std::cout<<static_cast<float>(packet.block6.azimuth)/100<< "\n";
-    std::cout<<static_cast<int>(packet.block0.flagEE);
-    std::cout<<static_cast<int>(packet.block0.flagFF);
-    std::cout<<static_cast<int>(packet.block1.flagEE);
-    std::cout<<static_cast<int>(packet.block1.flagFF);
-    std::cout<<static_cast<int>(packet.block2.flagEE);
-    std::cout<<static_cast<int>(packet.block2.flagFF);
-    std::cout<<static_cast<int>(packet.block3.flagEE);
-    std::cout<<static_cast<int>(packet.block3.flagFF);
+
+    std::cout<<static_cast<float>(packet.timeStamp)/1000000<< "\n";
 
 }
 
@@ -200,6 +167,7 @@ int main() {
             for(int i = 0 ; i < 12 ; i++){
                 memcpy(blocks[i] , buffer + i * 100 , 100);
             }
+            memcpy(&packet.timeStamp , buffer + 1200, 4);
             printPacket(packet);
         }else{
             std::cout<<"Packet Failed expected size " << BUFFER_SIZE << "bytes : recieved "<< bytesReceived << " bytes";
