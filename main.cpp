@@ -108,15 +108,15 @@ struct Packet{
 
 
 
-uint16_t reverse16(uint16_t &byte){
+void reverse16(uint16_t &byte){
 
-    return ((byte & 0x00FF) << 8) | 
+    byte = ((byte & 0x00FF) << 8) | 
            ((byte & 0xFF00) >> 8)  ;
 
 }
-uint32_t reverse32(uint32_t &byte){
+void reverse32(uint32_t &byte){
 
-    return ((byte & 0x000000FF) << 24) | 
+    byte = ((byte & 0x000000FF) << 24) | 
            ((byte & 0x0000FF00) << 8)  | 
            ((byte & 0x00FF0000) >> 8)  | 
            ((byte & 0xFF000000) >> 24);
@@ -125,7 +125,7 @@ uint32_t reverse32(uint32_t &byte){
 
 void printPacket(const  Packet &packet){
     packet.timeStamp = reverse32(packet.timeStamp);
-    std::cout<<static_cast<int>(packet.timeStamp)/1000000;
+    std::cout<<static_cast<int>(packet.timeStamp)/1000000.0f;
     std::cout<<static_cast<int>(packet.block0.flagEE);
     std::cout<<static_cast<int>(packet.block0.flagFF);
     std::cout<<static_cast<int>(packet.block1.flagEE);
