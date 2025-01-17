@@ -78,12 +78,12 @@ void printPacket(const dataBlock &block){
     //std::cout<<static_cast<int>(packet.block0.distChannel1);
     //std::cout<<static_cast<int>(packet.block0.distChannel2);
     //std::cout<<static_cast<int>(packet.block0.distChannel3);
-    std::cout<<static_cast<int>(block0.flagEE);
-    std::cout<<static_cast<int>(block0.flagFF);
-    std::cout<<static_cast<int>(block1.flagEE);
-    std::cout<<static_cast<int>(block1.flagFF);
-    std::cout<<static_cast<int>(block2.flagEE);
-    std::cout<<static_cast<int>(block2.flagFF);
+    std::cout<<static_cast<int>(block.flagEE);
+    std::cout<<static_cast<int>(block.flagFF);
+    std::cout<<static_cast<int>(block.flagEE);
+    std::cout<<static_cast<int>(block.flagFF);
+    std::cout<<static_cast<int>(block.flagEE);
+    std::cout<<static_cast<int>(block.flagFF);
 }
 
 
