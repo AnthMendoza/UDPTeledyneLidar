@@ -2,6 +2,7 @@
 #include <iomanip>       // For std::hex and std::setw
 #include <cstring>       // For memset
 #include <cstdlib>       // For exit
+#include <stdio.h>
 #include <sys/socket.h>  // For socket functions
 #include <netinet/in.h>  // For sockaddr_in
 #include <unistd.h>      // For close()
@@ -130,6 +131,7 @@ int main() {
     std::cout << "Listening for UDP packets on port " << PORT << "...\n";
 
     char buffer[BUFFER_SIZE];
+    memset(buffer, 0 , BUFFER_SIZE);
     sockaddr_in clientAddr{};
     socklen_t clientAddrLen = sizeof(clientAddr);
 
