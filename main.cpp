@@ -131,7 +131,6 @@ int main() {
     std::cout << "Listening for UDP packets on port " << PORT << "...\n";
 
     char buffer[BUFFER_SIZE];
-    memset(buffer, 0 , BUFFER_SIZE);
     sockaddr_in clientAddr{};
     socklen_t clientAddrLen = sizeof(clientAddr);
 
@@ -150,7 +149,7 @@ int main() {
         if(bytesReceived == BUFFER_SIZE){
             int position = 0;
             Packet packet;
-            memccpy(&packet , buffer , BUFFER_SIZE);
+            memcpy(&packet , buffer , BUFFER_SIZE);
             printPacket(packet);
         }else{
             std::cout<<"Packet Failed expected size " << BUFFER_SIZE << "bytes : recieved "<< bytesReceived << " bytes";
