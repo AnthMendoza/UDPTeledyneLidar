@@ -100,26 +100,32 @@ struct Packet{
     dataBlock block13;
     dataBlock block14;
     dataBlock block15;
+    
+    uint32_t timeStamp;
 };
 
-
-//data block is a struct which takes data to construct, thus memcpy wont fill properllly 
 
 
 
 
 uint16_t reverse16(uint16_t &byte){
+
     return ((byte & 0x00FF) << 8) | 
            ((byte & 0xFF00) >> 8)  ;
+
 }
 uint32_t reverse32(uint32_t &byte){
+
     return ((byte & 0x000000FF) << 24) | 
            ((byte & 0x0000FF00) << 8)  | 
            ((byte & 0x00FF0000) >> 8)  | 
            ((byte & 0xFF000000) >> 24);
+
 }
 
 void printPacket(const  Packet &packet){
+    packet.timeStamp = reverse32(packet.timeStamp);
+    std::cout<<static_cast<int>(packet.timeStamp)/1000000;
     std::cout<<static_cast<int>(packet.block0.flagEE);
     std::cout<<static_cast<int>(packet.block0.flagFF);
     std::cout<<static_cast<int>(packet.block1.flagEE);
@@ -128,6 +134,7 @@ void printPacket(const  Packet &packet){
     std::cout<<static_cast<int>(packet.block2.flagFF);
     std::cout<<static_cast<int>(packet.block3.flagEE);
     std::cout<<static_cast<int>(packet.block3.flagFF);
+
 }
 
 
@@ -182,8 +189,9 @@ int main() {
         if(bytesReceived == BUFFER_SIZE){
             for(int i = 0 ; i < 12 ; i++){
                 memcpy(blocks[i] , buffer + i * 100 , 100);
-                          
             }
+            memcpy(&packet.timeStamp ,buffer + 1200 , 4 );
+
             printPacket(packet);
         }else{
             std::cout<<"Packet Failed expected size " << BUFFER_SIZE << "bytes : recieved "<< bytesReceived << " bytes";
