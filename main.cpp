@@ -7,9 +7,108 @@
 #include <unistd.h>      // For close()
 #include <bitset>
 
+
+struct dataBlock{
+
+    uint8_t flagFF;
+    uint8_t flagEE;
+
+    uint16_t azimuth;
+
+    uint16_t distChannel0;
+    uint8_t reflectChennel0;
+    uint16_t distChannel1;
+    uint8_t reflectChennel1;
+    uint16_t distChannel2;
+    uint8_t reflectChennel2;
+    uint16_t distChannel3;
+    uint8_t reflectChennel3;
+    uint16_t distChannel4;
+    uint8_t reflectChennel4;
+    uint16_t distChannel5;
+    uint8_t reflectChennel5;
+    uint16_t distChannel6;
+    uint8_t reflectChennel6;
+    uint16_t distChannel7;
+    uint8_t reflectChennel7;
+    uint16_t distChannel8;
+    uint8_t reflectChennel8;
+    uint16_t distChannel9;
+    uint8_t reflectChennel9;
+    uint16_t distChannel10;
+    uint8_t reflectChennel10;
+    uint16_t distChannel11;
+    uint8_t reflectChennel11;
+    uint16_t distChannel12;
+    uint8_t reflectChennel12;
+    uint16_t distChannel13;
+    uint8_t reflectChennel13;
+    uint16_t distChannel14;
+    uint8_t reflectChennel14;
+    uint16_t distChannel15;
+    uint8_t reflectChennel15;
+
+    uint32_t timestamp;
+
+    uint16_t factoryBytes;
+
+};
+
+
+struct Packet{
+    dataBlock block0;
+    dataBlock block1;
+    dataBlock block2;
+    dataBlock block3;
+    dataBlock block4;
+    dataBlock block5;
+    dataBlock block6;
+    dataBlock block7;
+    dataBlock block8;
+    dataBlock block9;
+    dataBlock block10;
+    dataBlock block11;
+    dataBlock block12;
+    dataBlock block13;
+    dataBlock block14;
+    dataBlock block15;
+};
+
+
+uint16_t reverse16(uint16_t &byte){
+    return ((byte & 0x00FF) << 8) | 
+           ((byte & 0xFF00) >> 8)  ;
+}
+uint32_t reverse32(uint32_t &byte){
+    return ((byte & 0x000000FF) << 24) | 
+           ((byte & 0x0000FF00) << 8)  | 
+           ((byte & 0x00FF0000) >> 8)  | 
+           ((byte & 0xFF000000) >> 24);
+}
+
+//void formatBlock(dataBlock &block){
+//    block.azimuth = reverse16(block.azimuth);
+//    block.distChannel0 = reverse16(block.distChannel0);
+//}
+
+void printPacket(const Packet &packet){
+    //std::cout<<static_cast<int>(packet.block0.azimuth/100);
+    //std::cout<<static_cast<int>(packet.block0.distChannel0);
+    //std::cout<<static_cast<int>(packet.block0.distChannel1);
+    //std::cout<<static_cast<int>(packet.block0.distChannel2);
+    //std::cout<<static_cast<int>(packet.block0.distChannel3);
+    std::cout<<static_cast<int>(packet.block0.flagEE);
+    std::cout<<static_cast<int>(packet.block0.flagFF);
+    std::cout<<static_cast<int>(packet.block1.flagEE);
+    std::cout<<static_cast<int>(packet.block1.flagFF);
+    std::cout<<static_cast<int>(packet.block2.flagEE);
+    std::cout<<static_cast<int>(packet.block2.flagFF);
+}
+
+
 int main() {
     const int PORT = 2368;
-    const int BUFFER_SIZE = 1248;
+    const int BUFFER_SIZE = 1206;
 
     int sock = socket(AF_INET, SOCK_DGRAM, 0);
     if (sock < 0) {
@@ -46,11 +145,13 @@ int main() {
         }
 
         std::cout << "Received " << bytesReceived << " bytes as hex:\n";
-        for (ssize_t i = 0; i < bytesReceived; ++i) {
-
-            std::bitset<16> binary(buffer[i]); // Convert each byte to binary (8 bits)
-            std::cout << binary << " ";
-        std::cout << std::dec << "\n"; // Switch back to decimal format for other output
+        if(bytesReceived == BUFFER_SIZE){
+            int position = 0;
+            Packet packet;
+            memccpy(&packet , buffer , BUFFER_SIZE);
+            printPacket(packet);
+        }else{
+            std::cout<<"Packet Failed expected size " << BUFFER_SIZE << "bytes : recieved "<< bytesReceived << " bytes";
         }
     }
     close(sock);
