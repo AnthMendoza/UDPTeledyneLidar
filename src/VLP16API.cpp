@@ -17,16 +17,15 @@ std::mutex packetMutex;
 
 
 
-void writeToPacket(Packet &packet , ssize_t &bytesReceived , int &BUFFER_SIZE , dataBlock* blocks){
+void writeToPacket(Packet &packet , ssize_t &bytesReceived , int BUFFER_SIZE , dataBlock* blocks , char buffer){
     
     std::lock_guard<std::mutex> lock(packetMutex);
 
     if(bytesReceived == BUFFER_SIZE){
         for(int i = 0 ; i < 12 ; i++){
-            memcpy(blocks[i] , buffer + i * 100 , 1F00);
+            memcpy(blocks[i] , buffer + i * 100 , 100);
         }
         memcpy(&packet.timeStamp , buffer + 1200, 4);
-        printPacket(packet);
     }else{
         std::cout<<"Packet Failed expected size " << BUFFER_SIZE << "bytes : recieved "<< bytesReceived << " bytes";
     }
@@ -43,12 +42,11 @@ Packet readPacket(Packet &packet){
 void startUDP(){
     std::thread UDPThread(startUDP);
     const int PORT = 2368;
-    const int BUFFER_SIZE = 1206;
+    const int BUFFER_SIZE = 1206
 
     int sock = socket(AF_INET, SOCK_DGRAM, 0);
     if (sock < 0) {
         std::cerr << "Error creating socket.\n";
-        return 1;
     }
 
     sockaddr_in serverAddr{};
@@ -59,7 +57,6 @@ void startUDP(){
     if (bind(sock, reinterpret_cast<sockaddr*>(&serverAddr), sizeof(serverAddr)) < 0) {
         std::cerr << "Error binding socket.\n";
         close(sock);
-        return 1;
     }
 
     std::cout << "Listening for UDP packets on port " << PORT << "...\n";
@@ -82,7 +79,7 @@ void startUDP(){
 
         ssize_t bytesReceived = recvfrom(sock, buffer, BUFFER_SIZE, 0,  reinterpret_cast<sockaddr*>(&clientAddr), &clientAddrLen); 
 
-        writeToPacket(packet , bytesReceived , BUFFER_SIZE , blocks);
+        writeToPacket(packet , bytesReceived , BUFFER_SIZE , blocks , buffer);
             
 
     }
