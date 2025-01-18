@@ -17,7 +17,7 @@ std::mutex packetMutex;
 
 
 
-void writeToPacket(Packet &packet , ssize_t &bytesReceived , int BUFFER_SIZE , dataBlock* blocks , char buffer){
+void writeToPacket(Packet &packet , ssize_t &bytesReceived , int BUFFER_SIZE , std::array<dataBlock*,16> &blocks, char buffer){
     
     std::lock_guard<std::mutex> lock(packetMutex);
 
