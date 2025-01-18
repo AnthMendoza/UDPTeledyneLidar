@@ -17,7 +17,7 @@ std::mutex packetMutex;
 
 
 
-void writeToPacket(Packet &packet , ssize_t &bytesReceived , int BUFFER_SIZE , std::array<dataBlock*,16> &blocks, char buffer){
+void writeToPacket(Packet &packet , ssize_t &bytesReceived , int BUFFER_SIZE , std::array<dataBlock*,16> blocks, char buffer){
     
     std::lock_guard<std::mutex> lock(packetMutex);
 
@@ -42,7 +42,7 @@ Packet readPacket(Packet &packet){
 void startUDP(){
     std::thread UDPThread(startUDP);
     const int PORT = 2368;
-    const int BUFFER_SIZE = 1206
+    const int BUFFER_SIZE = 1206;
 
     int sock = socket(AF_INET, SOCK_DGRAM, 0);
     if (sock < 0) {
