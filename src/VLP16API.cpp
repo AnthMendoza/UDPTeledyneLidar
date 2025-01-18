@@ -17,13 +17,13 @@ std::mutex packetMutex;
 
 
 
-void writeToPacket(Packet &packet , ssize_t &bytesReceived , int &BUFFER_SIZE ){
+void writeToPacket(Packet &packet , ssize_t &bytesReceived , int &BUFFER_SIZE , dataBlock* blocks){
     
     std::lock_guard<std::mutex> lock(packetMutex);
 
     if(bytesReceived == BUFFER_SIZE){
         for(int i = 0 ; i < 12 ; i++){
-            memcpy(blocks[i] , buffer + i * 100 , 100);
+            memcpy(blocks[i] , buffer + i * 100 , 1F00);
         }
         memcpy(&packet.timeStamp , buffer + 1200, 4);
         printPacket(packet);
@@ -80,15 +80,10 @@ void startUDP(){
     while (true) {
         memset(buffer, 0, sizeof(buffer)); // Zero-initialize the buffer
 
-        ssize_t bytesReceived = recvfrom(sock, buffer, BUFFER_SIZE, 0,
-                                         reinterpret_cast<sockaddr*>(&clientAddr), &clientAddrLen);
+        ssize_t bytesReceived = recvfrom(sock, buffer, BUFFER_SIZE, 0,  reinterpret_cast<sockaddr*>(&clientAddr), &clientAddrLen); 
 
-        if (bytesReceived < 0) {
-            std::cerr << "Error receiving data.\n";
-            break;
-        }
-
-        std::cout << "Received " << bytesReceived << " bytes as hex:\n";
+        writeToPacket(packet , bytesReceived , BUFFER_SIZE , blocks);
+            
 
     }
     close(sock);
