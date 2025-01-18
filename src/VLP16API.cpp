@@ -7,6 +7,8 @@
 #include <netinet/in.h>  // For sockaddr_in
 #include <unistd.h>      // For close()
 #include <bitset>
+#include <thread>
+#include <mutex>
 
 
 struct dataBlock{
@@ -105,17 +107,34 @@ struct Packet{
 };
 
 
+std::mutex packetMutex;
 
 
 
-void printPacket( Packet &packet){
+void writeToPacket(Packet &packet , ssize_t &bytesReceived , int &BUFFER_SIZE ){
+    
+    std::lock_guard<std::mutex> lock(packetMutex);
 
-    std::cout<<static_cast<float>(packet.timeStamp)/1000000<< "\n";
+    if(bytesReceived == BUFFER_SIZE){
+        for(int i = 0 ; i < 12 ; i++){
+            memcpy(blocks[i] , buffer + i * 100 , 100);
+        }
+        memcpy(&packet.timeStamp , buffer + 1200, 4);
+        printPacket(packet);
+    }else{
+        std::cout<<"Packet Failed expected size " << BUFFER_SIZE << "bytes : recieved "<< bytesReceived << " bytes";
+    }
 
 }
 
+Packet readPacket(Packet &packet){
+    std::lock_guard<std::mutex> lock(packetMutex);
 
-int main() { 
+    return packet;
+
+}
+
+void startUDP(){
     const int PORT = 2368;
     const int BUFFER_SIZE = 1206;
 
@@ -163,17 +182,24 @@ int main() {
         }
 
         std::cout << "Received " << bytesReceived << " bytes as hex:\n";
-        if(bytesReceived == BUFFER_SIZE){
-            for(int i = 0 ; i < 12 ; i++){
-                memcpy(blocks[i] , buffer + i * 100 , 100);
-            }
-            memcpy(&packet.timeStamp , buffer + 1200, 4);
-            printPacket(packet);
-        }else{
-            std::cout<<"Packet Failed expected size " << BUFFER_SIZE << "bytes : recieved "<< bytesReceived << " bytes";
-        }
+
     }
     close(sock);
-    return 0;
+
+
+
 }
 
+
+
+int main() { 
+    std::thread UDPThread(startUDP);
+
+    while(true){
+        
+
+    }
+    
+    UDPThread.join();
+    return 0;
+}
