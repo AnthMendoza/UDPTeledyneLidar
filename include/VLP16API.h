@@ -101,7 +101,7 @@ struct Packet{
 
 
 
-void startUDP();
+void initUDP();
 
 Packet readPacket(Packet &packet);
 
